@@ -27,8 +27,8 @@
 
     <!-- 保存 -->
     <insert id="save" parameterType="student" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO demo_student(status, create_at, update_at, code, name)
-        VALUES(#{status}, NOW(), NOW(), #{code}, #{name})
+        INSERT INTO demo_student(status, create_at, update_at, code, name, plan_year, average_score)
+        VALUES(#{status}, NOW(), NOW(), #{code}, #{name}, #{planYear}, #{averageScore})
     </insert>
 
     <update id="update" parameterType="student">
@@ -50,25 +50,25 @@
 
     <!-- 根据ID查询学生对象 -->
     <select id="findOne" parameterType="int" resultMap="studentMap">
-        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
         exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
         FROM demo_student WHERE id = #{id}
     </select>
 
     <!-- 查询学生对象 -->
     <select id="findAll" resultType="student">
-        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
         exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank FROM demo_student
     </select>
 
     <select id="findAllByPlanYear" parameterType="string" resultMap="studentMap">
-        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
         exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
         FROM demo_student WHERE plan_year = #{planYear} ORDER BY code
     </select>
 
     <select id="findStudentListToInterview" resultType="student">
-        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
         exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
         FROM demo_student WHERE plan_year = #{year} ORDER BY exam_rank LIMIT 0, #{limit}
     </select>

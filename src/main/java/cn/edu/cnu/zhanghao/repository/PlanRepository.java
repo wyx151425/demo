@@ -33,4 +33,11 @@ public interface PlanRepository {
      * @return 计划数据集合
      */
     List<Plan> findAll();
+
+    /**
+     * 更新推免计划
+     *
+     * @param plan 计划对象
+     */
+    void update(Plan plan);
 }

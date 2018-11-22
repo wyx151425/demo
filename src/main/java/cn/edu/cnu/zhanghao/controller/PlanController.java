@@ -31,9 +31,9 @@ public class PlanController {
         return new Response<>();
     }
 
-    @PutMapping(value = "plans/inspect")
-    public Response<Student> actionCalculateAverageScore(@RequestBody Plan plan) {
-        planService.calculateAverageScore(plan.getYear());
+    @PutMapping(value = "plans")
+    public Response<Student> actionUpdatePlan(@RequestBody Plan plan) {
+        planService.updatePlan(plan);
         return new Response<>();
     }
 

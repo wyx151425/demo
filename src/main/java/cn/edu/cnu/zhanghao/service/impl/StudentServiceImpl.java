@@ -1,5 +1,6 @@
 package cn.edu.cnu.zhanghao.service.impl;
 
+import cn.edu.cnu.zhanghao.model.dto.PlanStudents;
 import cn.edu.cnu.zhanghao.model.pojo.Course;
 import cn.edu.cnu.zhanghao.model.pojo.Plan;
 import cn.edu.cnu.zhanghao.model.pojo.Student;
@@ -40,7 +41,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void importStudentAndCourseList(MultipartFile file) throws IOException, InvalidFormatException {
+    public void importStudentAndCourseList(String year, MultipartFile file) throws IOException, InvalidFormatException {
         Sheet sheet = formatExcelBOM(file);
         int index = 0;
         for (Row row : sheet) {
@@ -50,6 +51,7 @@ public class StudentServiceImpl implements StudentService {
                 Student student = Student.newInstance();
                 student.setCode(row.getCell(0).toString());
                 student.setName(row.getCell(1).toString());
+                student.setPlanYear(year);
                 Course course1 = Course.newInstance("数据结构", Integer.valueOf(row.getCell(2).toString()));
                 Course course2 = Course.newInstance("操作系统", Integer.valueOf(row.getCell(3).toString()));
                 Course course3 = Course.newInstance("计算机组成原理", Integer.valueOf(row.getCell(4).toString()));
@@ -87,6 +89,13 @@ public class StudentServiceImpl implements StudentService {
                 student.getCourseList().add(course16);
                 student.getCourseList().add(course17);
                 student.getCourseList().add(course18);
+                int averageScore;
+                int sumScore = 0;
+                for (Course course : student.getCourseList()) {
+                    sumScore += course.getScore();
+                }
+                averageScore = sumScore / student.getCourseList().size();
+                student.setAverageScore(averageScore);
                 saveStudentAndCourseList(student);
             }
         }
@@ -137,14 +146,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, readOnly = true)
-    public List<Student> findStudentListByYear(String year) {
+    public PlanStudents findStudentListByYear(String year) {
         Plan plan = planRepository.findOneByYear(year);
         if (Constant.PlanStatus.STARTED == plan.getStatus()) {
-            if (Constant.PlanStatus.Stage.STARTED == plan.getInspection()) {
-                return studentRepository.findAllByPlanYear(year);
-            }
-            if (Constant.PlanStatus.Stage.STARTED == plan.getExam()) {
-                return studentRepository.findStudentListToInterview(year, plan.getQuantity() * 2);
+            if (Constant.PlanStatus.Stage.STARTED == plan.getInspection() || Constant.PlanStatus.Stage.STARTED == plan.getExam()) {
+                List<Student> studentList =  studentRepository.findAllByPlanYear(year);
+                return new PlanStudents(plan, studentList);
+//                return studentRepository.findStudentListToInterview(year, plan.getQuantity() * 2);
             }
             if (Constant.PlanStatus.Stage.STARTED == plan.getInterview()) {
 
@@ -152,6 +160,6 @@ public class StudentServiceImpl implements StudentService {
         } else if (Constant.PlanStatus.COMPLETED == plan.getStatus()) {
 
         }
-        return studentRepository.findAll();
+        return new PlanStudents();
     }
 }

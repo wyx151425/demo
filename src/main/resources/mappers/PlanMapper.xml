@@ -8,6 +8,20 @@
         VALUES(#{status}, NOW(), NOW(), #{year}, #{quantity}, #{inspection}, #{exam}, #{interview}, #{admission})
     </insert>
 
+    <!-- 更新计划 -->
+    <update id="update" parameterType="plan">
+        UPDATE demo_plan
+        <set>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="inspection != null">inspection = #{inspection},</if>
+            <if test="exam != null">exam = #{exam},</if>
+            <if test="interview != null">interview = #{interview},</if>
+            <if test="admission != null">admission = #{admission},</if>
+            update_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
     <!-- 根据计划年份查找计划 -->
     <select id="findOneByYear" parameterType="string" resultType="plan">
         SELECT id, status, year, quantity, inspection, exam, interview, admission FROM demo_plan WHERE year = #{year}

@@ -14,6 +14,6 @@
 
     <!-- 根据学生ID查询课程数据 -->
     <select id="findAllByStudentId" parameterType="int" resultType="course">
-        SELECT id, name, score FROM demo_course WHERE student_id = #{id}
+        SELECT id, name, score, student_id FROM demo_course WHERE student_id = #{id}
     </select>
 </mapper>

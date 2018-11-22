@@ -2,6 +2,7 @@ package cn.edu.cnu.zhanghao.service;
 
 import cn.edu.cnu.zhanghao.model.pojo.Plan;
 
+import java.time.Year;
 import java.util.List;
 
 /**
@@ -18,16 +19,24 @@ public interface PlanService {
     void savePlan(Plan plan);
 
     /**
+     * 计算平均成绩
+     *
+     * @param plan 计划对象
+     */
+    void updatePlan(Plan plan);
+
+    /**
+     * 根据年份获取计划
+     *
+     * @param year 年
+     * @return 计划对象
+     */
+    Plan findPlanByYear(String year);
+
+    /**
      * 查询计划
      *
      * @return 计划数据集合
      */
     List<Plan> findPlanList();
-
-    /**
-     * 计算平均成绩
-     *
-     * @param year 计划年份
-     */
-    void calculateAverageScore(String year);
 }

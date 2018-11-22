@@ -24,12 +24,10 @@ import java.util.List;
 public class PlanServiceImpl implements PlanService {
 
     private final PlanRepository planRepository;
-    private final StudentRepository studentRepository;
 
     @Autowired
-    public PlanServiceImpl(PlanRepository planRepository, StudentRepository studentRepository) {
+    public PlanServiceImpl(PlanRepository planRepository) {
         this.planRepository = planRepository;
-        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -56,18 +54,13 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void calculateAverageScore(String year) {
-        List<Student> studentList = studentRepository.findAllByPlanYear(year);
-        for (Student student : studentList) {
-            List<Course> courseList = student.getCourseList();
-            int averageScore;
-            int sumScore = 0;
-            for (Course course : courseList) {
-                sumScore += course.getScore();
-            }
-            averageScore = sumScore / courseList.size();
-            student.setAverageScore(averageScore);
-            studentRepository.update(student);
-        }
+    public void updatePlan(Plan plan) {
+        planRepository.update(plan);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
+    public Plan findPlanByYear(String year) {
+        return planRepository.findOneByYear(year);
     }
 }

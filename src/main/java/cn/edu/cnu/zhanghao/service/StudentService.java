@@ -1,11 +1,11 @@
 package cn.edu.cnu.zhanghao.service;
 
+import cn.edu.cnu.zhanghao.model.dto.PlanStudents;
 import cn.edu.cnu.zhanghao.model.pojo.Student;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * 学生业务逻辑规范
@@ -15,12 +15,12 @@ import java.util.List;
 public interface StudentService {
     /**
      * 导入学生和成绩的方法
-     *
+     * @param year 计划年份
      * @param file 包含学生信息和成绩的文件
      * @throws IOException            输入输出错误
      * @throws InvalidFormatException 文件格式错误
      */
-    void importStudentAndCourseList(MultipartFile file) throws IOException, InvalidFormatException;
+    void importStudentAndCourseList(String year, MultipartFile file) throws IOException, InvalidFormatException;
 
     /**
      * 根据ID查询学生对象
@@ -36,5 +36,5 @@ public interface StudentService {
      * @param year 计划年份
      * @return 学生对象集合
      */
-    List<Student> findStudentListByYear(String year);
+    PlanStudents findStudentListByYear(String year);
 }
