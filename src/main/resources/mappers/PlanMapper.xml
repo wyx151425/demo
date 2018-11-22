@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cnu.zhanghao.repository.PlanRepository">
+    <!-- 保存 -->
+    <insert id="save" parameterType="plan" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO demo_plan(status, create_at, update_at, year, quantity, inspection, exam, interview, admission)
+        VALUES(#{status}, NOW(), NOW(), #{year}, #{quantity}, #{inspection}, #{exam}, #{interview}, #{admission})
+    </insert>
+
+    <!-- 根据计划年份查找计划 -->
+    <select id="findOneByYear" parameterType="string" resultType="plan">
+        SELECT id, status, year, quantity, inspection, exam, interview, admission FROM demo_plan WHERE year = #{year}
+    </select>
+
+    <!-- 查询所有计划 -->
+    <select id="findAll" resultType="plan">
+        SELECT id, status, year, quantity, inspection, exam, interview, admission FROM demo_plan ORDER BY year DESC
+    </select>
+</mapper>

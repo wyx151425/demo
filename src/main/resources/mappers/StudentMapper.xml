@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cnu.zhanghao.repository.StudentRepository">
+
+    <resultMap id="studentMap" type="cn.edu.cnu.zhanghao.model.pojo.Student">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="average_score" property="averageScore"/>
+        <result column="english_score" property="englishScore"/>
+        <result column="pro_course_score" property="proCourseScore"/>
+        <result column="additional_score" property="additionalScore"/>
+        <result column="exam_score" property="examScore"/>
+        <result column="exam_rank" property="examRank"/>
+        <result column="interview_score" property="interviewScore"/>
+        <result column="comprehensive_score" property="comprehensiveScore"/>
+        <result column="comprehensive_rank" property="comprehensiveRank"/>
+        <collection column="id" property="courseList" fetchType="lazy"
+                    javaType="ArrayList" ofType="cn.edu.cnu.zhanghao.model.pojo.Course"
+                    select="cn.edu.cnu.zhanghao.repository.CourseRepository.findAllByStudentId">
+            <id property="id" column="id"/>
+            <result column="name" property="name"/>
+            <result column="score" property="score"/>
+        </collection>
+    </resultMap>
+
+    <!-- 保存 -->
+    <insert id="save" parameterType="student" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO demo_student(status, create_at, update_at, code, name)
+        VALUES(#{status}, NOW(), NOW(), #{code}, #{name})
+    </insert>
+
+    <update id="update" parameterType="student">
+        UPDATE demo_student
+        <set>
+            <if test="averageScore != null">average_score = #{averageScore},</if>
+            <if test="englishScore != null">english_score = #{englishScore},</if>
+            <if test="proCourseScore != null">pro_course_score = #{proCourseScore},</if>
+            <if test="additionalScore != null">additional_score = #{additionalScore},</if>
+            <if test="examScore != null">exam_score = #{examScore},</if>
+            <if test="examRank != null">exam_rank = #{examRank},</if>
+            <if test="interviewScore != null">interview_score = #{interviewScore},</if>
+            <if test="comprehensiveScore != null">comprehensive_score = #{comprehensiveScore},</if>
+            <if test="comprehensiveRank != null">comprehensive_rank = #{comprehensiveRank},</if>
+            update_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询学生对象 -->
+    <select id="findOne" parameterType="int" resultMap="studentMap">
+        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
+        FROM demo_student WHERE id = #{id}
+    </select>
+
+    <!-- 查询学生对象 -->
+    <select id="findAll" resultType="student">
+        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank FROM demo_student
+    </select>
+
+    <select id="findAllByPlanYear" parameterType="string" resultMap="studentMap">
+        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
+        FROM demo_student WHERE plan_year = #{planYear} ORDER BY code
+    </select>
+
+    <select id="findStudentListToInterview" resultType="student">
+        SELECT id, code, name, average_score, english_score, pro_course_score, additional_score,
+        exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
+        FROM demo_student WHERE plan_year = #{year} ORDER BY exam_rank LIMIT 0, #{limit}
+    </select>
+</mapper>
