@@ -1,7 +1,6 @@
 package cn.edu.cnu.zhanghao.service.impl;
 
 import cn.edu.cnu.zhanghao.context.DemoException;
-import cn.edu.cnu.zhanghao.model.pojo.Course;
 import cn.edu.cnu.zhanghao.model.pojo.Plan;
 import cn.edu.cnu.zhanghao.model.pojo.Student;
 import cn.edu.cnu.zhanghao.repository.PlanRepository;
@@ -24,10 +23,12 @@ import java.util.List;
 public class PlanServiceImpl implements PlanService {
 
     private final PlanRepository planRepository;
+    private final StudentRepository studentRepository;
 
     @Autowired
-    public PlanServiceImpl(PlanRepository planRepository) {
+    public PlanServiceImpl(PlanRepository planRepository, StudentRepository studentRepository) {
         this.planRepository = planRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -55,6 +56,62 @@ public class PlanServiceImpl implements PlanService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePlan(Plan plan) {
+        if (null != plan.getInspection() && Constant.PlanStatus.Stage.COMPLETED == plan.getInspection()) {
+            int stuQuantity = studentRepository.findStudentQuantity(plan.getYear());
+            if (stuQuantity < plan.getQuantity()) {
+                throw new DemoException(StatusCode.STUDENT_QUANTITY_NOT_ENOUGH);
+            }
+            plan.setStatus(Constant.PlanStatus.EXAMINING);
+        }
+        if (null != plan.getExam() && Constant.PlanStatus.Stage.COMPLETED == plan.getExam()) {
+            List<Student> studentList = studentRepository.findAllByPlanYear(plan.getYear());
+            for (Student student : studentList) {
+                if (null == student.getExamScore()) {
+                    throw new DemoException(StatusCode.EXAM_SCORE_UNENTERED);
+                }
+            }
+            studentList.sort((o1, o2) -> {
+                if (o1.getExamScore() < o2.getExamScore()) {
+                    return 1;
+                } else if (o1.getExamScore().equals(o2.getExamScore())) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            });
+            for (int index = 0; index < studentList.size(); index++) {
+                studentList.get(index).setExamRank(index + 1);
+                studentRepository.update(studentList.get(index));
+            }
+            plan.setStatus(Constant.PlanStatus.INTERVIEWING);
+        }
+        if (null != plan.getInterview() && Constant.PlanStatus.Stage.COMPLETED == plan.getInterview()) {
+            List<Student> studentList = studentRepository.findStudentListInterview(plan.getYear(), plan.getQuantity() * 2);
+            for (Student student : studentList) {
+                if (null == student.getInterviewScore()) {
+                    throw new DemoException(StatusCode.INTERVIEW_SCORE_UNENTERED);
+                } else {
+                    student.setComprehensiveScore(student.getExamScore() + student.getInterviewScore());
+                }
+            }
+            studentList.sort((o1, o2) -> {
+                if (o1.getComprehensiveScore() < o2.getComprehensiveScore()) {
+                    return 1;
+                } else if (o1.getComprehensiveScore().equals(o2.getComprehensiveScore())) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            });
+            for (int index = 0; index < studentList.size(); index++) {
+                studentList.get(index).setComprehensiveRank(index + 1);
+                studentRepository.update(studentList.get(index));
+            }
+            plan.setStatus(Constant.PlanStatus.ADMITTING);
+        }
+        if (null != plan.getAdmission() && Constant.PlanStatus.Stage.COMPLETED == plan.getAdmission()) {
+            plan.setStatus(Constant.PlanStatus.COMPLETED);
+        }
         planRepository.update(plan);
     }
 

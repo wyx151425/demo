@@ -20,7 +20,10 @@ public class Constant {
     public static final class PlanStatus {
         public static final int ENDED = 0;
         public static final int STARTED = 1;
-        public static final int COMPLETED = 2;
+        public static final int EXAMINING = 2;
+        public static final int INTERVIEWING = 3;
+        public static final int ADMITTING = 4;
+        public static final int COMPLETED = 5;
 
         public static final class Stage {
             public static final int NOT_STARTED = 0;

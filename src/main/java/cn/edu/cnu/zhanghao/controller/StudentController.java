@@ -52,6 +52,18 @@ public class StudentController {
         return new Response<>();
     }
 
+    @DeleteMapping(value = "students/{id}")
+    public Response<Student> actionDeleteStudent(@PathVariable(value = "id") Integer id) {
+        studentService.deleteStudent(id);
+        return new Response<>();
+    }
+
+    @PutMapping(value = "students")
+    public Response<Student> actionUpdateStudent(@RequestBody Student student) {
+        studentService.updateStudent(student);
+        return new Response<>();
+    }
+
     @GetMapping(value = "students/{id}")
     public Response<PlanStudent> actionFindStudentAndCourseList(@PathVariable(value = "id") Integer id) {
         Student student = studentService.findStudentAndCourseList(id);
@@ -60,8 +72,13 @@ public class StudentController {
     }
 
     @GetMapping(value = "students")
-    public Response<PlanStudents> actionFindStudentListByYear(@RequestParam(value = "year") String year) {
-        PlanStudents planStudents = studentService.findStudentListByYear(year);
+    public Response<PlanStudents> actionFindStudentListByYear(@RequestParam(value = "year") String year, @RequestParam(value = "status", required = false) Integer status) {
+        PlanStudents planStudents;
+        if (null == status) {
+            planStudents = studentService.findStudentListByYear(year);
+        } else {
+            planStudents = studentService.findStudentListByYearAndStatus(year, status);
+        }
         return new Response<>(planStudents);
     }
 }

@@ -31,6 +31,10 @@
         VALUES(#{status}, NOW(), NOW(), #{code}, #{name}, #{planYear}, #{averageScore})
     </insert>
 
+    <update id="delete" parameterType="int">
+        UPDATE demo_student SET status = 0 WHERE id = #{id}
+    </update>
+
     <update id="update" parameterType="student">
         UPDATE demo_student
         <set>
@@ -52,24 +56,34 @@
     <select id="findOne" parameterType="int" resultMap="studentMap">
         SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
         exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
-        FROM demo_student WHERE id = #{id}
+        FROM demo_student WHERE status > 0 AND id = #{id}
     </select>
 
     <!-- 查询学生对象 -->
     <select id="findAll" resultType="student">
         SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
-        exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank FROM demo_student
+        exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank FROM demo_student WHERE AND status > 0
+    </select>
+
+    <select id="findStudentQuantity" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM demo_student WHERE status > 0 AND plan_year = #{year}
     </select>
 
     <select id="findAllByPlanYear" parameterType="string" resultMap="studentMap">
         SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
         exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
-        FROM demo_student WHERE plan_year = #{planYear} ORDER BY code
+        FROM demo_student WHERE status > 0 AND plan_year = #{planYear} ORDER BY code
     </select>
 
-    <select id="findStudentListToInterview" resultType="student">
+    <select id="findStudentListInterview" resultType="student">
         SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
         exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
-        FROM demo_student WHERE plan_year = #{year} ORDER BY exam_rank LIMIT 0, #{limit}
+        FROM demo_student WHERE status > 0 AND plan_year = #{year} ORDER BY exam_rank LIMIT 0, #{limit}
+    </select>
+
+    <select id="findStudentListAdmission" resultType="student">
+        SELECT id, code, name, plan_year, average_score, english_score, pro_course_score, additional_score,
+        exam_score, exam_rank, interview_score, comprehensive_score, comprehensive_rank
+        FROM demo_student WHERE status > 0 AND comprehensive_rank IS NOT NULL AND plan_year = #{year} ORDER BY comprehensive_rank LIMIT 0, #{limit}
     </select>
 </mapper>

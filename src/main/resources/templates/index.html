@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>研究生推免系统</title>
+    <link rel="shortcut icon" href="images/logo.jpg" type="image/x-icon"/>
+    <link rel="stylesheet" href="css/demo.css"/>
+</head>
+<body>
+<header class="header">
+    <div class="header-fixed">
+        <div class="container">
+            <p class="logo">首都师范大学</p>
+            <div class="account">
+                <span>{{user.name}}</span>
+                <span class="icon icon-off" @click="logout"></span>
+            </div>
+        </div>
+    </div>
+</header>
+<main id="container" class="container">
+    <div class="panel">
+        <div class="btn-list">
+            <button class="btn pull-right" @click="planReleaseModalVisible">发布计划</button>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>年份</th>
+                    <th>计划人数</th>
+                    <th>进行情况</th>
+                    <th>资格审查</th>
+                    <th>笔试</th>
+                    <th>面试</th>
+                    <th>录取</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="plan in planList">
+                    <td>{{plan.year}}</td>
+                    <td>{{plan.quantity}}</td>
+                    <td v-if="0 == plan.status" class="error" v-cloak>已终止</td>
+                    <td v-if="plan.status > 0 && plan.status < 5" class="success">进行中</td>
+                    <td v-if="5 == plan.status" class="prompt" v-cloak>已完成</td>
+                    <td v-if="0 == plan.inspection">未开始</td>
+                    <td v-if="1 == plan.inspection" class="success" v-cloak>进行中</td>
+                    <td v-if="2 == plan.inspection" class="prompt" v-cloak>已完成</td>
+                    <td v-if="0 == plan.exam">未开始</td>
+                    <td v-if="1 == plan.exam" class="success" v-cloak>进行中</td>
+                    <td v-if="2 == plan.exam" class="prompt" v-cloak>已完成</td>
+                    <td v-if="0 == plan.interview">未开始</td>
+                    <td v-if="1 == plan.interview" class="success" v-cloak>进行中</td>
+                    <td v-if="2 == plan.interview" class="prompt" v-cloak>已完成</td>
+                    <td v-if="0 == plan.admission">未开始</td>
+                    <td v-if="1 == plan.admission" class="success" v-cloak>进行中</td>
+                    <td v-if="2 == plan.admission" class="prompt" v-cloak>已完成</td>
+                    <td>
+                        <button class="btn-link" style="margin-right: 16px" @click="planUpdateModalVisible(plan)" v-if="plan.status < 3">修改</button>
+                        <a class="btn-link" :href="'plan.html?year=' + plan.year">查看</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer class="footer">
+    <span>&copy;2018 首都师范大学</span>
+</footer>
+<div id="planReleaseModal" class="modal" v-if="isVisible" v-cloak>
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <span class="modal-title">发布计划</span>
+            <span class="modal-close"><span class="icon icon-remove" @click="invisible"></span></span>
+        </div>
+        <div class="modal-content form-horizontal form-horizon4">
+            <div class="form-group">
+                <label class="form-label">计划年份</label>
+                <input class="form-control" type="text" v-model="plan.year"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label">推免人数</label>
+                <input class="form-control" type="text" v-model="plan.quantity"/>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel pull-right" @click="invisible" :disabled="isDisabled">取消</button>
+            <button class="btn pull-right" @click="releasePlan" :disabled="isDisabled">{{action}}</button>
+        </div>
+    </div>
+</div>
+<div id="planUpdateModal" class="modal" v-if="isVisible" v-cloak>
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <span class="modal-title">修改计划</span>
+            <span class="modal-close"><span class="icon icon-remove" @click="invisible"></span></span>
+        </div>
+        <div class="modal-content form-horizontal form-horizon4">
+            <div class="form-group">
+                <label class="form-label">计划年份</label>
+                <p class="form-control">{{plan.year}}</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">推免人数</label>
+                <input class="form-control" type="text" v-model="plan.quantity"/>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel pull-right" @click="invisible" :disabled="isDisabled">取消</button>
+            <button class="btn pull-right" @click="updatePlan" :disabled="isDisabled">{{action}}</button>
+        </div>
+    </div>
+</div>
+<div id="popoverSpace" class="popover-space" v-if="prompts.length > 0">
+    <popover v-for="prompt in prompts" v-bind:key="prompt.id" v-bind:prompt="prompt"></popover>
+</div>
+<div id="mask" class="mask" v-if="loading">
+    <p class="mask-prompt">数据获取中...</p>
+</div>
+<script src="js/vue.min.js"></script>
+<script src="js/axios.min.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

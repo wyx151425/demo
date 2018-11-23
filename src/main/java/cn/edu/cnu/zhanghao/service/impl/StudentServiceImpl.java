@@ -137,6 +137,18 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteStudent(Integer id) {
+        studentRepository.delete(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStudent(Student student) {
+        studentRepository.update(student);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class, readOnly = true)
     public Student findStudentAndCourseList(Integer id) {
         Student student = studentRepository.findOne(id);
@@ -148,18 +160,28 @@ public class StudentServiceImpl implements StudentService {
     @Transactional(rollbackFor = Exception.class, readOnly = true)
     public PlanStudents findStudentListByYear(String year) {
         Plan plan = planRepository.findOneByYear(year);
-        if (Constant.PlanStatus.STARTED == plan.getStatus()) {
-            if (Constant.PlanStatus.Stage.STARTED == plan.getInspection() || Constant.PlanStatus.Stage.STARTED == plan.getExam()) {
-                List<Student> studentList =  studentRepository.findAllByPlanYear(year);
-                return new PlanStudents(plan, studentList);
-//                return studentRepository.findStudentListToInterview(year, plan.getQuantity() * 2);
-            }
-            if (Constant.PlanStatus.Stage.STARTED == plan.getInterview()) {
-
-            }
-        } else if (Constant.PlanStatus.COMPLETED == plan.getStatus()) {
-
+        List<Student> studentList = new ArrayList<>();
+        if (Constant.PlanStatus.STARTED == plan.getStatus() || Constant.PlanStatus.EXAMINING == plan.getStatus()) {
+            studentList = studentRepository.findAllByPlanYear(year);
+        } else if (Constant.PlanStatus.INTERVIEWING == plan.getStatus()) {
+            studentList = studentRepository.findStudentListInterview(year, plan.getQuantity() * 2);
+        } else if (Constant.PlanStatus.ADMITTING == plan.getStatus() || Constant.PlanStatus.COMPLETED == plan.getStatus()) {
+            studentList = studentRepository.findStudentListAdmission(year, plan.getQuantity());
         }
-        return new PlanStudents();
+        return new PlanStudents(plan, studentList);
+    }
+
+    @Override
+    public PlanStudents findStudentListByYearAndStatus(String year, int status) {
+        Plan plan = planRepository.findOneByYear(year);
+        List<Student> studentList = new ArrayList<>();
+        if (0 == status) {
+            studentList = studentRepository.findAllByPlanYear(year);
+        } else if (1 == status) {
+            studentList = studentRepository.findStudentListInterview(year, plan.getQuantity() * 2);
+        } else if (2 == status) {
+            studentList = studentRepository.findStudentListAdmission(year, plan.getQuantity());
+        }
+        return new PlanStudents(plan, studentList);
     }
 }

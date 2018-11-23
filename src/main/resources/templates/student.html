@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>研究生推免系统</title>
+    <link rel="shortcut icon" href="images/logo.jpg" type="image/x-icon"/>
+    <link rel="stylesheet" href="css/demo.css"/>
+</head>
+<body>
+<header class="header">
+    <div class="header-fixed">
+        <div class="container">
+            <p class="logo">首都师范大学</p>
+            <div class="account">
+                <span>{{user.name}}</span>
+                <span class="icon icon-off" @click="logout"></span>
+            </div>
+        </div>
+    </div>
+</header>
+<main id="container" class="container">
+    <div class="panel">
+        <div class="option-list">
+            <span class="option" :class="{active: tabIndex == 1}" @click="changeTab(1)">基础测评</span>
+            <span class="option" :class="{active: tabIndex == 2}" @click="changeTab(2)" v-if="plan.status >= 2">初试</span>
+            <span class="option" :class="{active: tabIndex == 3}" @click="changeTab(3)" v-if="plan.status >= 3">面试</span>
+            <span class="option" :class="{active: tabIndex == 4}" @click="changeTab(4)" v-if="plan.status >= 4">综合分析</span>
+            <button class="btn-return">返回</button>
+        </div>
+        <div v-if="1 == tabIndex">
+            <div class="form-score">
+                <div class="form-group">
+                    <label class="form-label">学号*</label>
+                    <p class="form-control">{{student.code}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">姓名*</label>
+                    <p class="form-control">{{student.name}}</p>
+                </div>
+                <div class="form-group" v-for="(course, index) in student.courseList">
+                    <label class="form-label">{{course.name}}</label>
+                    <input class="form-control" type="text" :value="course.score" v-model="course.score"
+                           placeholder="请输入"/>
+                </div>
+            </div>
+            <button class="btn pull-right" @click="saveCourseList" :disabled="isDisabled"
+                    style="margin-right: 210px; margin-top: 60px" v-if="1 == plan.status">{{action}}
+            </button>
+        </div>
+        <div v-if="2 == tabIndex" v-cloak>
+            <div class="form-score">
+                <div class="form-group">
+                    <label class="form-label">学号*</label>
+                    <p class="form-control">{{student.code}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">姓名*</label>
+                    <p class="form-control">{{student.name}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">基础成绩*</label>
+                    <p class="form-control">{{student.averageScore}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">专业课成绩</label>
+                    <input class="form-control" type="text" v-model="student.proCourseScore" @change="changeExamScore"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">外语成绩</label>
+                    <input class="form-control" type="text" v-model="student.englishScore" @change="changeExamScore"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">附加分数</label>
+                    <input class="form-control" type="text" v-model="student.additionalScore" @change="changeExamScore"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">初试成绩*</label>
+                    <p class="form-control">{{student.examScore}}</p>
+                </div>
+            </div>
+            <button class="btn pull-right" @click="saveExamScore" :disabled="isDisabled"
+                    style="margin-right: 210px; margin-top: 60px" v-if="2 == plan.status">{{action}}
+            </button>
+        </div>
+        <div v-if="3 == tabIndex" v-cloak>
+            <div class="form-score">
+                <div class="form-group">
+                    <label class="form-label">学号*</label>
+                    <p class="form-control">{{student.code}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">姓名*</label>
+                    <p class="form-control">{{student.name}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">面试成绩</label>
+                    <input class="form-control" type="text" v-model="student.interviewScore"/>
+                </div>
+            </div>
+            <button class="btn pull-right" @click="saveInterviewScore" :disabled="isDisabled"
+                    style="margin-right: 210px; margin-top: 60px" v-if="3 == plan.status && student.examRank <= plan.quantity * 2">{{action}}
+            </button>
+        </div>
+        <div v-if="4 == tabIndex" v-cloak>
+            <div class="form-score">
+                <div class="form-group">
+                    <label class="form-label">学号*</label>
+                    <p class="form-control">{{student.code}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">姓名*</label>
+                    <p class="form-control">{{student.name}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">总成绩</label>
+                    <p class="form-control">{{student.comprehensiveScore}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">总排名</label>
+                    <p class="form-control">{{student.comprehensiveRank}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">基础成绩</label>
+                    <p class="form-control">{{student.averageScore}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">专业课成绩</label>
+                    <p class="form-control">{{student.proCourseScore}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">英语成绩</label>
+                    <p class="form-control">{{student.englishScore}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">附加分数</label>
+                    <p class="form-control">{{student.additionalScore}}</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">面试成绩</label>
+                    <p class="form-control">{{student.interviewScore}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="footer">
+    <span>&copy;2018 首都师范大学</span>
+</footer>
+<div id="popoverSpace" class="popover-space" v-if="prompts.length > 0">
+    <popover v-for="prompt in prompts" v-bind:key="prompt.id" v-bind:prompt="prompt"></popover>
+</div>
+<div id="mask" class="mask" v-if="loading">
+    <p class="mask-prompt">数据获取中...</p>
+</div>
+<script src="js/vue.min.js"></script>
+<script src="js/axios.min.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/student.js"></script>
+</body>
+</html>

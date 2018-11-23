@@ -21,6 +21,13 @@ public interface StudentRepository {
     void save(Student student);
 
     /**
+     * 删除学生数据
+     *
+     * @param id 学生ID
+     */
+    void delete(Integer id);
+
+    /**
      * 更新学生数据
      *
      * @param student 学生对象
@@ -43,6 +50,14 @@ public interface StudentRepository {
     List<Student> findAll();
 
     /**
+     * 查找学生数量
+     *
+     * @param year 计划年份
+     * @return 数量
+     */
+    int findStudentQuantity(String year);
+
+    /**
      * 根据学年查询学生
      *
      * @param year 年份
@@ -57,5 +72,13 @@ public interface StudentRepository {
      * @param limit 人数
      * @return 学生数据集合
      */
-    List<Student> findStudentListToInterview(@Param(value = "year") String year, @Param(value = "limit") int limit);
+    List<Student> findStudentListInterview(@Param(value = "year") String year, @Param(value = "limit") int limit);
+
+    /**
+     * 查询可推免的学生
+     *
+     * @param year 年份
+     * @return 学生数据集合
+     */
+    List<Student> findStudentListAdmission(@Param(value = "year") String year, @Param(value = "limit") int limit);
 }

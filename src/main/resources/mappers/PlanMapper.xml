@@ -12,6 +12,7 @@
     <update id="update" parameterType="plan">
         UPDATE demo_plan
         <set>
+            <if test="status != null">status = #{status},</if>
             <if test="quantity != null">quantity = #{quantity},</if>
             <if test="inspection != null">inspection = #{inspection},</if>
             <if test="exam != null">exam = #{exam},</if>
