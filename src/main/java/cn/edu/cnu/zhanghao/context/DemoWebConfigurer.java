@@ -7,7 +7,9 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @author Web配置
+ * Web配置管理器
+ *
+ * @author 张浩
  */
 @Component
 public class DemoWebConfigurer implements WebMvcConfigurer {

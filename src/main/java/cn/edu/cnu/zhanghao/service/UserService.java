@@ -3,6 +3,8 @@ package cn.edu.cnu.zhanghao.service;
 import cn.edu.cnu.zhanghao.model.pojo.User;
 
 /**
+ * 用户业务逻辑规范
+ *
  * @author 张浩
  */
 public interface UserService {

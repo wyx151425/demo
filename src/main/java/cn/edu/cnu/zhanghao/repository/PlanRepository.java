@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
+ * 计划数据仓库
+ *
  * @author 张浩
  */
 @Mapper

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * 用户业务逻辑实现
+ *
  * @author 张浩
  */
 @Service(value = "userService")

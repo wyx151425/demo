@@ -42,3 +42,17 @@ CREATE TABLE `demo_plan` (
   `admission` INT(1),
   PRIMARY KEY (`id`)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8;
+
+CREATE TABLE `demo_user` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `status` INT(1),
+  `create_at` DATETIME,
+  `update_at` DATETIME,
+  `name` VARCHAR(3),
+  `username` VARCHAR(32),
+  `password` VARCHAR(32),
+  PRIMARY KEY (`id`)
+)  ENGINE=INNODB DEFAULT CHARSET=UTF8;
+
+INSERT INTO demo_user(id, status, create_at, update_at, name, username, password)
+VALUES(1, 1, NOW(), NOW(), '管理员', 'admin', '123456');

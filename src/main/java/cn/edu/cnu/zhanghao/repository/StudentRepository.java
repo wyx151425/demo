@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
+ * 学生数据仓库
+ *
  * @author 张浩
  */
 @Mapper

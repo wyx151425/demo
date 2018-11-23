@@ -1,11 +1,15 @@
 package cn.edu.cnu.zhanghao.repository;
 
 import cn.edu.cnu.zhanghao.model.pojo.User;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 /**
+ * 用户数据仓库
+ *
  * @author 张浩
  */
+@Mapper
 @Repository
 public interface UserRepository {
     /**
