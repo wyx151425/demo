@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/demo.css"/>
 </head>
 <body>
-<header class="header">
+<header id="header" class="header">
     <div class="header-fixed">
         <div class="container">
             <p class="logo">首都师范大学</p>
@@ -24,8 +24,8 @@
             <span class="option" :class="{active: tabIndex == 1}" @click="changeTab(1)">基础测评</span>
             <span class="option" :class="{active: tabIndex == 2}" @click="changeTab(2)" v-if="plan.status >= 2">初试</span>
             <span class="option" :class="{active: tabIndex == 3}" @click="changeTab(3)" v-if="plan.status >= 3">面试</span>
-            <span class="option" :class="{active: tabIndex == 4}" @click="changeTab(4)" v-if="plan.status >= 4">综合分析</span>
-            <button class="btn-return">返回</button>
+            <span class="option" :class="{active: tabIndex == 4}" @click="changeTab(4)" v-if="plan.status >= 4">综合成绩</span>
+            <a class="btn-return" :href="'plan?year=' + plan.year">返回</a>
         </div>
         <div v-if="1 == tabIndex">
             <div class="form-score">

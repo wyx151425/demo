@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/demo.css"/>
 </head>
 <body>
-<header class="header">
+<header id="header" class="header">
     <div class="header-fixed">
         <div class="container">
             <p class="logo">首都师范大学</p>
@@ -27,7 +27,7 @@
             <thead>
                 <tr>
                     <th>年份</th>
-                    <th>计划人数</th>
+                    <th>拟推免人数</th>
                     <th>进行情况</th>
                     <th>资格审查</th>
                     <th>笔试</th>
@@ -56,8 +56,8 @@
                     <td v-if="1 == plan.admission" class="success" v-cloak>进行中</td>
                     <td v-if="2 == plan.admission" class="prompt" v-cloak>已完成</td>
                     <td>
-                        <button class="btn-link" style="margin-right: 16px" @click="planUpdateModalVisible(plan)" v-if="plan.status < 3">修改</button>
-                        <a class="btn-link" :href="'plan.html?year=' + plan.year">查看</a>
+                        <a class="btn-link" :href="'plan?year=' + plan.year" style="margin-right: 16px">查看</a>
+                        <button class="btn-link"  @click="planUpdateModalVisible(plan)" v-if="plan.status < 3">修改</button>
                     </td>
                 </tr>
             </tbody>
